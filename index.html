@@ -1,4 +1,5 @@
-<!DOCTYPE html>
+<!-- Unfortunately, Blockly expects quirks mode. -->
+<!-- DOCTYPE html -->
 <html>
   <head>
     <title>Blockly Mario!</title>
@@ -14,14 +15,62 @@
     <canvas id="canvas" width="320" height="240" tabindex="0"></canvas>
     <div id="blockly">
       <xml id="toolbox" style="display: none">
-        <!-- These are the defaults and might likely need to change some. -->
-        <block type="controls_if"></block>
-        <block type="controls_repeat"></block>
-        <block type="logic_compare"></block>
-        <block type="math_number"></block>
-        <block type="math_arithmetic"></block>
-        <block type="text"></block>
-        <block type="text_print"></block>
+        <category name="Control">
+          <block type="controls_if"></block>
+          <block type="controls_whileUntil"></block>
+          <block type="controls_repeat"></block>
+          <block type="controls_for"></block>
+          <block type="controls_forEach"></block>
+          <block type="controls_flow_statements"></block>
+        </category>
+        <category name="Logic">
+          <block type="logic_boolean"></block>
+          <block type="logic_compare"></block>
+          <block type="logic_negate"></block>
+          <block type="logic_operation"></block>
+          <block type="logic_ternary"></block>
+          <block type="logic_null"></block>
+        </category>
+        <category name="Math">
+          <block type="math_number"></block>
+          <block type="math_constant"></block>
+          <block type="math_arithmetic"></block>
+          <block type="math_round"></block>
+          <block type="math_single"></block>
+          <block type="math_trig"></block>
+          <block type="math_modulo"></block>
+          <block type="math_constrain"></block>
+          <block type="math_number_property"></block>
+          <block type="math_on_list"></block>
+          <block type="math_random_float"></block>
+          <block type="math_random_int"></block>
+          <block type="math_change"></block>
+        </category>
+        <category name="Procedures">
+          <block type="procedures_defreturn"></block>
+          <block type="procedures_defnoreturn"></block>
+          <block type="procedures_ifreturn"></block>
+          <block type="procedures_callreturn"></block>
+          <block type="procedures_callnoreturn"></block>
+        </category>
+        <category name="Text">
+          <block type="text"></block>
+          <block type="text_print"></block>
+          <block type="text_prompt"></block>
+          <block type="text_changeCase"></block>
+          <block type="text_charAt"></block>
+          <block type="text_getSubstring"></block>
+          <block type="text_isEmpty"></block>
+          <block type="text_indexOf"></block>
+          <block type="text_join"></block>
+          <block type="text_length"></block>
+          <block type="text_trim"></block>
+          <block type="text_append"></block>
+        </category>
+        <category name="Variables">
+          <block type="variables_get"></block>
+          <block type="variables_set"></block>
+        </category>
       </xml>
     </div>
   </body>
