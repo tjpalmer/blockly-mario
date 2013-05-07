@@ -1,6 +1,7 @@
-// TODO Replace with Typescript code!
+/// <reference path="blockly.d.ts" />
+/// <reference path="mario.d.ts" />
 
-(function() {
+module blockly_mario {
 
 window.onload = function() {
   // TODO Support telling mario where to load things!
@@ -14,4 +15,4 @@ function $(id) {
   return document.getElementById(id);
 }
 
-})();
+}
