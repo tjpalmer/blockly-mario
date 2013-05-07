@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Blockly Mario!</title>
+    <link rel="stylesheet" href="blockly-mario.css"/>
+    <script src="blockly/blockly_compressed.js"></script>
+    <script src="blockly/en_compressed.js"></script>
+    <script src="mario/enjine.min.js"></script>
+    <script src="mario/mario.min.js"></script>
+    <script src="blockly-mario.js"></script>
+  </head>
+  <body>
+    <!-- Use tabindex to make mario focusable. -->
+    <canvas id="canvas" width="320" height="240" tabindex="0"></canvas>
+    <div id="blockly">
+      <xml id="toolbox" style="display: none">
+        <!-- These are the defaults and might likely need to change some. -->
+        <block type="controls_if"></block>
+        <block type="controls_repeat"></block>
+        <block type="logic_compare"></block>
+        <block type="math_number"></block>
+        <block type="math_arithmetic"></block>
+        <block type="text"></block>
+        <block type="text_print"></block>
+      </xml>
+    </div>
+  </body>
+</html>
