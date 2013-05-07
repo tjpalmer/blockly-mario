@@ -3,6 +3,6 @@ blockly-mario
 
 HTML Infinite Mario with Blockly scripting.
 
-While only the minified scripts and core media are used, I find it convenient to
-symlink (my modified) mariohtml5 to mario and blockly to blockly as subdirs.
-That gets this up and running with easy sync.
+While only the minified scripts and core media are used, this is designed to be
+easy to run with sibling project dirs for "blockly" and (my modified version of)
+"mariohtml5".
