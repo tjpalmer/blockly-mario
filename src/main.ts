@@ -1,4 +1,5 @@
 /// <reference path="blockly.d.ts" />
+/// <reference path="blocks.ts" />
 /// <reference path="mario.d.ts" />
 
 module blockly_mario {

@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="blockly-mario.css"/>
     <script src="../blockly/blockly_compressed.js"></script>
     <script src="../blockly/en_compressed.js"></script>
+    <script src="../blockly/javascript_compressed.js"></script>
     <script src="../mariohtml5/enjine.min.js"></script>
     <script src="../mariohtml5/mario.min.js"></script>
     <script src="blockly-mario.min.js"></script>
@@ -15,6 +16,10 @@
     <canvas id="canvas" width="320" height="240" tabindex="0"></canvas>
     <div id="blockly">
       <xml id="toolbox" style="display: none">
+        <category name="Agent">
+          <block type="agent_act"></block>
+          <block type="agent_is_active"></block>
+        </category>
         <category name="Control">
           <block type="controls_if"></block>
           <block type="controls_whileUntil"></block>
