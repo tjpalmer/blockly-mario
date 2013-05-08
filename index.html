@@ -17,8 +17,14 @@
     <div id="blockly">
       <xml id="toolbox" style="display: none">
         <category name="Agent">
-          <block type="agent_act"></block>
-          <block type="agent_is_active"></block>
+          <block type="agent_act">
+            <value name="ACTION"><block type="agent_action"></block></value>
+            <value name="VALUE"><block type="logic_boolean"></block></value>
+          </block>
+          <block type="agent_is_active">
+            <value name="ACTION"><block type="agent_action"></block></value>
+          </block>
+          <block type="agent_action"></block>
         </category>
         <category name="Control">
           <block type="controls_if"></block>

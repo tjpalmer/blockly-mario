@@ -2,10 +2,22 @@ module blockly_mario {
 
 Blockly.Language.agent_act = {
   init: function() {
+    this.setColour(290);
+    this.appendDummyInput().appendTitle("activate");
+    this.appendValueInput('ACTION').setCheck(String);
+    this.appendValueInput('VALUE').setCheck(Boolean);
+    this.setInputsInline(true);
+    this.setPreviousStatement(true);
+    this.setNextStatement(true);
+    this.setTooltip("");
+  }
+};
+
+Blockly.Language.agent_action = {
+  init: function() {
     this.setColour(160);
     this
       .appendDummyInput()
-      .appendTitle("activate")
       .appendTitle(
         new Blockly.FieldDropdown([
           ["jump", 'JUMP'],
@@ -17,32 +29,19 @@ Blockly.Language.agent_act = {
         ]),
         'ACTION'
       );
-    this.appendValueInput("VALUE").setCheck(Boolean);
     this.setInputsInline(true);
-    this.setPreviousStatement(true);
-    this.setNextStatement(true);
-    this.setTooltip("");
+    this.setOutput(true, String);
+    this.setTooltip('');
   }
 };
 
 Blockly.Language.agent_is_active = {
   init: function() {
-    this.setColour(160);
-    this
-      .appendDummyInput()
-      .appendTitle("is")
-      .appendTitle(
-        new Blockly.FieldDropdown([
-          ["jump", 'JUMP'],
-          ["shoot", 'SHOOT'],
-          ["left", 'LEFT'],
-          ["right", 'RIGHT'],
-          ["up", 'UP'],
-          ["down", 'DOWN']
-        ]),
-        'ACTION'
-      )
-      .appendTitle("active");
+    this.setColour(120);
+    this.appendDummyInput().appendTitle("is");
+    this.appendValueInput('ACTION').setCheck(String);
+    this.appendDummyInput().appendTitle("active");
+    this.setInputsInline(true);
     this.setOutput(true, Boolean);
     this.setTooltip("");
   }
