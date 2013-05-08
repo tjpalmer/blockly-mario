@@ -4,16 +4,26 @@
 
 module blockly_mario {
 
+var application: any;
+
 window.onload = function() {
   // TODO Support telling mario where to load things!
-  new Enjine.Application().Initialize(
-    new Mario.LoadingState("../mariohtml5/"), 320, 240
-  );
+  application = new Enjine.Application();
+  application.Initialize(new Mario.LoadingState("../mariohtml5/"), 320, 240);
   Blockly.inject($('blockly'), {path: "../blockly/", toolbox: $('toolbox')});
+  $('pause').onclick = handlePause;
 };
 
-function $(id) {
+function $(id): HTMLElement {
   return document.getElementById(id);
+}
+
+function handlePause() {
+  if (this.checked) {
+    application.timer.Stop();
+  } else {
+    application.timer.Start();
+  }
 }
 
 }

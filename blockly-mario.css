@@ -1,3 +1,15 @@
+#app {
+  bottom: 0;
+  left: 0;
+  overflow: auto;
+  padding: 0;
+  position: fixed;
+  top: 0;
+  /* Note the dependencies between #blockly left and #app width.
+  /* Resizable might be nice sometime. */
+  width: 340px;
+}
+
 #blockly {
   /* Bring in the bottom and right a little. Blockly is overshooting. */
   bottom: 2px;
@@ -9,12 +21,10 @@
   right: 2px;
 }
 
-#canvas {
-  height: 240px;
-  left: 10px;
-  position: absolute;
-  top: 10px;
-  /* Note the dependencies between #blockly left and #canvas left and width.
-  /* Resizable might be nice sometime. */
-  width: 320px;
+#content {
+  margin: 10px;
+}
+
+#controls {
+  margin: 10px 0;
 }

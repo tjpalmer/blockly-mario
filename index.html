@@ -13,7 +13,16 @@
   </head>
   <body>
     <!-- Use tabindex to make mario focusable. -->
-    <canvas id="canvas" width="320" height="240" tabindex="0"></canvas>
+    <div id="app">
+      <div id="content">
+        <div>
+          <canvas id="canvas" width="320" height="240" tabindex="0"></canvas>
+        </div>
+        <div id="controls">
+          <label><input id="pause" type="checkbox" value="Pause"/> Pause</label>
+        </div>
+      </div>
+    </div>
     <div id="blockly">
       <xml id="toolbox" style="display: none">
         <category name="Agent">
