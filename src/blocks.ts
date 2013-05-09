@@ -20,14 +20,14 @@ Blockly.Language.agent_action = {
       .appendDummyInput()
       .appendTitle(
         new Blockly.FieldDropdown([
-          ["jump", 'JUMP'],
-          ["shoot", 'SHOOT'],
-          ["left", 'LEFT'],
-          ["right", 'RIGHT'],
-          ["up", 'UP'],
-          ["down", 'DOWN']
+          ["jump", 'jump'],
+          ["shoot", 'shoot'],
+          ["left", 'left'],
+          ["right", 'right'],
+          ["up", 'up'],
+          ["down", 'down']
         ]),
-        'ACTION'
+        'VALUE'
       );
     this.setInputsInline(true);
     this.setOutput(true, String);
@@ -35,7 +35,7 @@ Blockly.Language.agent_action = {
   }
 };
 
-Blockly.Language.agent_is_active = {
+Blockly.Language.agent_isActive = {
   init: function() {
     this.setColour(120);
     this.appendDummyInput().appendTitle("is");
@@ -48,10 +48,52 @@ Blockly.Language.agent_is_active = {
 };
 
 Blockly.JavaScript.agent_act = function() {
-  var dropdown_action = this.getTitleValue('ACTION');
-  // TODO: Assemble JavaScript into code variable.
-  var code = '...';
+  var action: string =
+    valueToCode(this, 'ACTION', Blockly.JavaScript.ORDER_NONE);
+  var value: string =
+    valueToCode(this, 'VALUE', Blockly.JavaScript.ORDER_ASSIGNMENT);
+  // For the moment, this works directly on key presses, but the current action
+  // string names ('down', 'left', ...) could be used differently in the future,
+  // if wanted.
+  var code = [
+    "Enjine.KeyboardInput.Pressed[",
+      actionKeyCodeExpr(action),
+    "] = ",
+      value,
+    ";\n"
+  ].join("");
+  // All done.
   return code;
 };
+
+Blockly.JavaScript.agent_action = function() {
+  // The values here are used directly as string contents.
+  var code = '"' + this.getTitleValue('VALUE') + '"';
+  return [code, Blockly.JavaScript.ORDER_ATOMIC];
+};
+
+Blockly.JavaScript.agent_isActive = function() {
+  var action: string =
+    valueToCode(this, 'ACTION', Blockly.JavaScript.ORDER_NONE);
+  var code = "Enjine.KeyboardInput.Pressed[" + actionKeyCodeExpr(action) + "]";
+  return [code, Blockly.JavaScript.ORDER_MEMBER];
+};
+
+function valueToCode(block, name: string, order) =>
+  Blockly.JavaScript.valueToCode(block, name, order);
+
+/// Map from action names to Enjine.Keys names.
+function actionKeyCodeExpr(nameExpr: string) => [
+  "Enjine.Keys[{", [
+    'down: "Down"',
+    'left: "Left"',
+    'jump: "S"',
+    'right: "Right"',
+    'shoot: "A"',
+    'up: "Up"',
+  ].join(", "),
+  "}[",
+    nameExpr,
+  "]]"].join("");
 
 }
