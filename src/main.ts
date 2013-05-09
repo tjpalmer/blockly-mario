@@ -19,7 +19,10 @@ window.onload = function() {
   Blockly.inject($('blockly'), {path: "../blockly/", toolbox: $('toolbox')});
 
   // Event handlers.
+  // Reset pause because we otherwise just get a blank canvas.
+  (<HTMLInputElement>$('pause')).checked = false;
   $('pause').onclick = handlePause;
+  $('update').onclick = updateCode;
 };
 
 class AiUpdate {
@@ -35,6 +38,7 @@ function $(id): HTMLElement {
 }
 
 function handleKeyDown(base) {
+  // Using function here because => ties this, and I want standard one.
   return function(event: KeyboardEvent) {
     if (this.IsActive() && event.keyCode == 32) {
       // Toggle on space.
@@ -56,6 +60,11 @@ function handlePause() {
   } else {
     application.timer.Start();
   }
+}
+
+function updateCode() {
+  var code = Blockly.Generator.workspaceToCode('JavaScript');
+  console.log(code);
 }
 
 }
