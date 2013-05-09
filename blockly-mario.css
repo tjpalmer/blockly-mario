@@ -21,10 +21,14 @@
   right: 2px;
 }
 
-#content {
+#content > * {
   margin: 10px;
 }
 
-#controls {
-  margin: 10px 0;
+#controls > * {
+  margin-right: 1em;
+}
+
+#controls > *:last-child {
+  margin: 0;
 }

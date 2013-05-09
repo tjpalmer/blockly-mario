@@ -1,5 +1,12 @@
-<!-- Unfortunately, Blockly expects quirks mode. -->
-<!-- DOCTYPE html -->
+<!DOCTYPE html>
+<!--
+  Unfortunately, Blockly expects quirks mode.
+  But that's obnoxious.
+  Folks say child selectors work in IE only in standards mode.
+  Main Blockly problem I've seen is an extra pixel between block categories and
+  block lists in the toolbox.
+  Can I fix this?
+-->
 <html>
   <head>
     <title>Blockly Mario!</title>
@@ -20,6 +27,8 @@
         </div>
         <div id="controls">
           <label><input id="pause" type="checkbox" value="Pause"/> Pause</label>
+          <label><input id="pause" type="checkbox" value="Pause"/>
+            AI Control</label>
         </div>
       </div>
     </div>
