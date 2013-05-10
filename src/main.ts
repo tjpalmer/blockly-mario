@@ -4,7 +4,7 @@
 
 module blockly_mario {
 
-var aiFunction: () => void;
+var aiFunction: () => any;
 
 var application: any;
 
@@ -14,13 +14,19 @@ window.onload = function() {
   application.Initialize(new Mario.LoadingState("../mariohtml5/"), 320, 240);
   // Inject our own timer handler for ai logic.
   application.timer.UpdateObject = new AiUpdate(application);
-  Enjine.KeyboardInput.KeyDownEvent =
-    handleKeyDown(Enjine.KeyboardInput.KeyDownEvent);
+  redefine(Enjine.KeyboardInput, 'KeyDownEvent', defineKeyDown);
 
   // Blockly.
   Blockly.inject($('blockly'), {path: "../blockly/", toolbox: $('toolbox')});
+  // Override code finish, because we want to wrap the main code in a function
+  // but retain variables outside it for persistence.
+  // The alternative is to hack the generated code after the fact. No fun there.
+  redefine(Blockly.JavaScript, 'finish', defineFinishCode);
 
   // Event handlers.
+  // Focus game when disabling AI.
+  // When by mouse, this make sense. TODO Verify by mouse using cleverness?
+  $('ai').onclick = () => {if (!$input('ai').checked) $('canvas').focus()};
   // Reset pause because we otherwise just get a blank canvas.
   $input('pause').checked = false;
   $('pause').onclick = handlePause;
@@ -30,25 +36,42 @@ window.onload = function() {
   $input('ai').disabled = true;
 };
 
+/// TODO Rename this to 'AiStep'?
 class AiUpdate {
   constructor(private base: any) {}
   Update(delta: number): void {
     // TODO Mario AI calls!
-    var aiActive = $input('ai').checked;
+    var aiActive = $input('ai').checked && Boolean(aiFunction);
     var oldPressed: any;
     if (aiActive) {
+      // Run our AI, then extract the key presses from the actions.
+      var actions = aiFunction();
+      var pressed = {};
+      var keyMap = {
+        down: "Down",
+        left: "Left",
+        jump: "S",
+        right: "Right",
+        shoot: "A",
+        up: "Up",
+      };
+      for (var actionName in actions) {
+        // Enjine checks loosely against null for false, so don't even bother to
+        // set pressed if not true.
+        if (actions[actionName]) {
+          pressed[Enjine.Keys[keyMap[actionName]]] = true;
+        }
+      }
       // Copy keys pressed for later restore.
       oldPressed = Enjine.KeyboardInput.Pressed;
-      Enjine.KeyboardInput.Pressed = {};
+      // Assign the new values, and override need for focus.
+      Enjine.KeyboardInput.Pressed = pressed;
       Enjine.KeyboardInput.Element = null;
-      if (aiFunction) {
-        aiFunction();
-      }
     }
     // Run the base update either way.
     this.base.Update(delta);
     if (aiActive) {
-      // Restore old keyboard layout.
+      // Restore old keyboard layout and focus requirement.
       Enjine.KeyboardInput.Pressed = oldPressed;
       Enjine.KeyboardInput.Element = $('canvas');
     }
@@ -67,7 +90,20 @@ function copySimpleShallow(object) {
   return copy;
 }
 
-function handleKeyDown(base) {
+/// Wraps the main generated statements in a returned function.
+/// Generated variables and functions should be outside this.
+function defineFinishCode(base) {
+  // TODO Indenting code lines would be nice.
+  return (code: string) => base([
+    "return function() {",
+    "var $$actions = {};",
+    code,
+    "return $$actions;",
+    "};",
+  ].join("\n"));
+}
+
+function defineKeyDown(base) {
   // Using function here because => ties this, and I want standard one.
   return function(event: KeyboardEvent) {
     // TODO Add space code (32) to Enjine.Keys?
@@ -93,6 +129,11 @@ function handlePause() {
   }
 }
 
+/// Allows easy wrap overriding.
+function redefine(object, name: string, define): void {
+  object[name] = define(object[name]);
+}
+
 function updateCode() {
   var code = Blockly.Generator.workspaceToCode('JavaScript');
   // Wrap in a function we can call at each update.
@@ -100,7 +141,9 @@ function updateCode() {
   code = ["(function() {", code, "})"].join("\n");
   //console.log(code);
   try {
-    aiFunction = eval(code);
+    // The code actually returns the function from inside it, so call the eval
+    // result immediately.
+    aiFunction = eval(code)();
     $input('ai').disabled = false;
   } catch (e) {
     alert("Error building code.");

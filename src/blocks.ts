@@ -52,16 +52,8 @@ Blockly.JavaScript.agent_act = function() {
     valueToCode(this, 'ACTION', Blockly.JavaScript.ORDER_NONE);
   var value: string =
     valueToCode(this, 'VALUE', Blockly.JavaScript.ORDER_ASSIGNMENT);
-  // For the moment, this works directly on key presses, but the current action
-  // string names ('down', 'left', ...) could be used differently in the future,
-  // if wanted.
-  var code = [
-    "Enjine.KeyboardInput.Pressed[",
-      actionKeyCodeExpr(action),
-    "] = ",
-      value,
-    ";\n"
-  ].join("");
+  // Track actions in a local object we'll return later.
+  var code = ["$$actions[", action, "] = ", value, ";\n"].join("");
   // All done.
   return code;
 };
