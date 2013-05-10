@@ -22,6 +22,7 @@ window.onload = function() {
   // but retain variables outside it for persistence.
   // The alternative is to hack the generated code after the fact. No fun there.
   redefine(Blockly.JavaScript, 'finish', defineFinishCode);
+  Blockly.addChangeListener(workspaceChanged);
 
   // Event handlers.
   // Focus game when disabling AI.
@@ -32,8 +33,14 @@ window.onload = function() {
   $('pause').onclick = handlePause;
   $('update').onclick = updateCode;
 
-  // Disable AI control until update.
-  $input('ai').disabled = true;
+  // Restore saved blocks if any.
+  var blocksXml = localStorage.getItem(storageName('blocks'));
+  if (blocksXml) {
+    var dom = Blockly.Xml.textToDom(blocksXml);
+    Blockly.Xml.domToWorkspace(Blockly.mainWorkspace, dom);
+  }
+  // No op, but hey. Timeout because it wasn't disabling the button right.
+  setTimeout(() => {updateCode()}, 0);
 };
 
 /// TODO Rename this to 'AiStep'?
@@ -134,17 +141,22 @@ function redefine(object, name: string, define): void {
   object[name] = define(object[name]);
 }
 
+/// From BlocklyStorage strategy to keep named for this url.
+function storageName(name: string) =>
+  window.location.href.split("#")[0] + "#" + name;
+
 function updateCode() {
   var code = Blockly.Generator.workspaceToCode('JavaScript');
   // Wrap in a function we can call at each update.
   // TODO Do I want to capture or use time delta?
   code = ["(function() {", code, "})"].join("\n");
-  //console.log(code);
   try {
     // The code actually returns the function from inside it, so call the eval
     // result immediately.
     aiFunction = eval(code)();
     $input('ai').disabled = false;
+    // We got new code. Disable update for now.
+    $input('update').disabled = true;
   } catch (e) {
     alert("Error building code.");
     aiFunction = null;
@@ -153,6 +165,16 @@ function updateCode() {
     // Disable AI control.
     throw e;
   }
+}
+
+function workspaceChanged() {
+  // Let the user know they can recompile.
+  $('update').disabled = false;
+  // Also save immediately, although undo/redo would sure be nice.
+  var xml = Blockly.Xml.domToText(
+    Blockly.Xml.workspaceToDom(Blockly.mainWorkspace)
+  );
+  window.localStorage.setItem(storageName('blocks'), xml);
 }
 
 }

@@ -17,9 +17,17 @@ module.exports = function(grunt) {
       },
     },
 
+    watch: {
+      typescript: {
+        files: ["src/*"],
+        tasks: ['default'],
+      }
+    },
+
   });
 
   grunt.loadNpmTasks("grunt-contrib-uglify");
+  grunt.loadNpmTasks("grunt-contrib-watch");
   grunt.loadNpmTasks("grunt-typescript");
 
   grunt.registerTask('default', ['typescript', 'uglify']);
