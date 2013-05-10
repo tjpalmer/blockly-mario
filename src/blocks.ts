@@ -4,8 +4,7 @@ Blockly.Language.agent_act = {
   init: function() {
     this.setColour(290);
     this.appendDummyInput().appendTitle("activate");
-    this.appendValueInput('ACTION').setCheck(String);
-    this.appendValueInput('VALUE').setCheck(Boolean);
+    this.appendValueInput('ACTION');
     this.setInputsInline(true);
     this.setPreviousStatement(true);
     this.setNextStatement(true);
@@ -35,25 +34,11 @@ Blockly.Language.agent_action = {
   }
 };
 
-Blockly.Language.agent_isActive = {
-  init: function() {
-    this.setColour(120);
-    this.appendDummyInput().appendTitle("is");
-    this.appendValueInput('ACTION').setCheck(String);
-    this.appendDummyInput().appendTitle("active");
-    this.setInputsInline(true);
-    this.setOutput(true, Boolean);
-    this.setTooltip("");
-  }
-};
-
 Blockly.JavaScript.agent_act = function() {
   var action: string =
     valueToCode(this, 'ACTION', Blockly.JavaScript.ORDER_NONE);
-  var value: string =
-    valueToCode(this, 'VALUE', Blockly.JavaScript.ORDER_ASSIGNMENT);
   // Track actions in a local object we'll return later.
-  var code = ["$$actions[", action, "] = ", value, ";\n"].join("");
+  var code = ["$$actions[", action, "] = true;\n"].join("");
   // All done.
   return code;
 };
@@ -64,28 +49,7 @@ Blockly.JavaScript.agent_action = function() {
   return [code, Blockly.JavaScript.ORDER_ATOMIC];
 };
 
-Blockly.JavaScript.agent_isActive = function() {
-  var action: string =
-    valueToCode(this, 'ACTION', Blockly.JavaScript.ORDER_NONE);
-  var code = "Enjine.KeyboardInput.Pressed[" + actionKeyCodeExpr(action) + "]";
-  return [code, Blockly.JavaScript.ORDER_MEMBER];
-};
-
 function valueToCode(block, name: string, order) =>
   Blockly.JavaScript.valueToCode(block, name, order);
-
-/// Map from action names to Enjine.Keys names.
-function actionKeyCodeExpr(nameExpr: string) => [
-  "Enjine.Keys[{", [
-    'down: "Down"',
-    'left: "Left"',
-    'jump: "S"',
-    'right: "Right"',
-    'shoot: "A"',
-    'up: "Up"',
-  ].join(", "),
-  "}[",
-    nameExpr,
-  "]]"].join("");
 
 }
