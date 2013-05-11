@@ -102,10 +102,15 @@ function copySimpleShallow(object) {
 function defineFinishCode(base) {
   // TODO Indenting code lines would be nice.
   return (code: string) => base([
+    // Declare $$actions outside the returned function so that user-defined
+    // procedures also can access it.
+    "var $$actions;",
     "return function() {",
-    "var $$actions = {};",
-    code,
-    "return $$actions;",
+      // However, reset the value to empty at each decision step.
+      // TODO Indenting code here would be great.
+      "$$actions = {};",
+      code,
+      "return $$actions;",
     "};",
   ].join("\n"));
 }
@@ -150,6 +155,7 @@ function updateCode() {
   // Wrap in a function we can call at each update.
   // TODO Do I want to capture or use time delta?
   code = ["(function() {", code, "})"].join("\n");
+  console.log(code);
   try {
     // The code actually returns the function from inside it, so call the eval
     // result immediately.
