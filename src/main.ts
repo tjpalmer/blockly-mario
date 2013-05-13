@@ -6,7 +6,7 @@ module blockly_mario {
 
 var aiFunction: () => any;
 
-var application: any;
+export var application: any;
 
 window.onload = function() {
   // Mario.
