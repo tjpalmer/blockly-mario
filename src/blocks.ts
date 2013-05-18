@@ -39,6 +39,15 @@ Blockly.Language.agent_action = {
   }
 };
 
+Blockly.Language.agent_enemies = {
+  init: function() {
+    this.setColour(210);
+    this.appendDummyInput().appendTitle("enemies");
+    this.setOutput(true, Array);
+    this.setTooltip("A list of all enemies (in distance order?).");
+  }
+};
+
 Blockly.Language.agent_mode = {
   init: function() {
     this.setColour(120);
@@ -94,13 +103,8 @@ Blockly.JavaScript.agent_action = function() {
   return [code, Blockly.JavaScript.ORDER_ATOMIC];
 };
 
-Blockly.JavaScript.agent_mode = function() {
-  var action: string =
-    valueToCode(this, 'ACTION', Blockly.JavaScript.ORDER_NONE);
-  // Track actions in a local object we'll return later.
-  var code = ["$$actions[", action, "] = true;\n"].join("");
-  // All done.
-  return code;
+Blockly.JavaScript.agent_enemies = function() {
+  return ["$$support.enemies()", Blockly.JavaScript.ORDER_MEMBER];
 };
 
 Blockly.JavaScript.agent_mode = function() {
@@ -111,9 +115,8 @@ Blockly.JavaScript.agent_mode = function() {
     TITLE: "Mario.TitleState",
     WIN: "Mario.WinState",
   }[this.getTitleValue('MODE')];
-  var code =
-    "blockly_mario.application.stateContext.State instanceof " + className;
-  return [code, Blockly.JavaScript.ORDER_INSTANCEOF];
+  var code = "$$support.gameStateIs(" + className + ")";
+  return [code, Blockly.JavaScript.ORDER_MEMBER];
 };
 
 Blockly.JavaScript.agent_onGround = function() {
@@ -126,6 +129,14 @@ Blockly.JavaScript.agent_velocity = function() {
   // Use standard Cartesian coordinates on Y. Up is positive.
   var code = "[Mario.MarioCharacter.Xa, -Mario.MarioCharacter.Ya]";
   return [code, Blockly.JavaScript.ORDER_ATOMIC];
+};
+
+/// Override standard blockly print, since alert isn't really appropriate here.
+/// TODO Separate log block and retain alert for print?
+/// TODO Some log visible on page? (And plotting, too?)
+Blockly.JavaScript.text_print = function() {
+  var text = valueToCode(this, 'TEXT', Blockly.JavaScript.ORDER_NONE) || '""';
+  return 'console.log(' + text + ');\n';
 };
 
 function valueToCode(block, name: string, order) =>

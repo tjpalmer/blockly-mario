@@ -1,12 +1,13 @@
 /// <reference path="blockly.d.ts" />
 /// <reference path="blocks.ts" />
 /// <reference path="mario.d.ts" />
+/// <reference path="support.ts" />
 
 module blockly_mario {
 
 var aiFunction: () => any;
 
-export var application: any;
+var application: any;
 
 window.onload = function() {
   // Mario.
@@ -154,12 +155,12 @@ function updateCode() {
   var code = Blockly.Generator.workspaceToCode('JavaScript');
   // Wrap in a function we can call at each update.
   // TODO Do I want to capture or use time delta?
-  code = ["(function() {", code, "})"].join("\n");
+  code = ["(function($$support) {", code, "})"].join("\n");
   //console.log(code);
   try {
     // The code actually returns the function from inside it, so call the eval
     // result immediately.
-    aiFunction = eval(code)();
+    aiFunction = eval(code)(new Support(application));
     $input('ai').disabled = false;
     // We got new code. Disable update for now.
     $input('update').disabled = true;
