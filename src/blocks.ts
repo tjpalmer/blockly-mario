@@ -48,6 +48,15 @@ Blockly.Language.agent_enemies = {
   }
 };
 
+Blockly.Language.agent_mario = {
+  init: function() {
+    this.setColour(0);
+    this.appendDummyInput().appendTitle("mario");
+    this.setOutput(true, "Sprite");
+    this.setTooltip("Mario player character.");
+  }
+};
+
 Blockly.Language.agent_mode = {
   init: function() {
     this.setColour(120);
@@ -78,13 +87,28 @@ Blockly.Language.agent_onGround = {
   }
 };
 
-Blockly.Language.agent_velocity = {
-  helpUrl: 'http://www.example.com/',
+Blockly.Language.agent_value = {
   init: function() {
     this.setColour(230);
-    this.appendDummyInput().appendTitle("velocity");
-    this.setOutput(true, Array);
-    this.setTooltip("Most recent x and y velocity as list of two numbers.");
+    this.appendValueInput("SPRITE");
+    this
+      .appendDummyInput()
+      .appendTitle(
+        new Blockly.FieldDropdown([
+          ["position x", 'POSITION_X'],
+          ["position y", 'POSITION_Y'],
+          ["radius x", 'RADIUS_X'],
+          ["radius y", 'RADIUS_Y'],
+          ["velocity x", 'VELOCITY_X'],
+          ["velocity y", 'VELOCITY_Y'],
+        ]),
+        'VALUE'
+      );
+    this.setInputsInline(true);
+    this.setOutput(true, Number);
+    this.setTooltip(
+      "Get the requested value for the given animated character."
+    );
   }
 };
 
@@ -107,6 +131,10 @@ Blockly.JavaScript.agent_enemies = function() {
   return ["$$support.enemies()", Blockly.JavaScript.ORDER_MEMBER];
 };
 
+Blockly.JavaScript.agent_mario = function() {
+  return ["Mario.MarioCharacter", Blockly.JavaScript.ORDER_MEMBER];
+};
+
 Blockly.JavaScript.agent_mode = function() {
   var className = {
     LEVEL: "Mario.LevelState",
@@ -124,11 +152,11 @@ Blockly.JavaScript.agent_onGround = function() {
   return [code, Blockly.JavaScript.ORDER_MEMBER];
 };
 
-Blockly.JavaScript.agent_velocity = function() {
-  // Even though it says "a", it's used as velocity in the code.
-  // Use standard Cartesian coordinates on Y. Up is positive.
-  var code = "[Mario.MarioCharacter.Xa, -Mario.MarioCharacter.Ya]";
-  return [code, Blockly.JavaScript.ORDER_ATOMIC];
+Blockly.JavaScript.agent_value = function() {
+  var sprite = valueToCode(this, 'SPRITE', Blockly.JavaScript.ORDER_COMMA);
+  var valueKey = this.getTitleValue('VALUE');
+  var code = ["$$support.spriteValue(", sprite, ", '", valueKey, "')"].join("");
+  return [code, Blockly.JavaScript.ORDER_MEMBER];
 };
 
 /// Override standard blockly print, since alert isn't really appropriate here.
