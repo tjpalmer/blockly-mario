@@ -107,7 +107,11 @@ Blockly.Language.agent_value = {
     this.setInputsInline(true);
     this.setOutput(true, Number);
     this.setTooltip(
-      "Get the requested value for the given animated character."
+      "Get the requested value for the given animated character.\n" +
+      "Positions are refer to center points, " +
+      "where right is +X and up is +Y.\n" +
+      "Mario's origin is the bottom middle of the screen, " +
+      "and all other characters are relative to Mario."
     );
   }
 };

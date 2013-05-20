@@ -7,14 +7,16 @@ module blockly_mario {
 
 var aiFunction: () => any;
 
-var application: any;
+/// The mariohtml5 app.
+/// Exported for easier inspection in console.
+export var app: any;
 
 window.onload = function() {
   // Mario.
-  application = new Enjine.Application();
-  application.Initialize(new Mario.LoadingState("../mariohtml5/"), 320, 240);
+  app = new Enjine.Application();
+  app.Initialize(new Mario.LoadingState("../mariohtml5/"), 320, 240);
   // Inject our own timer handler for ai logic.
-  application.timer.UpdateObject = new AiUpdate(application);
+  app.timer.UpdateObject = new AiUpdate(app);
   redefine(Enjine.KeyboardInput, 'KeyDownEvent', defineKeyDown);
 
   // Blockly.
@@ -136,9 +138,9 @@ function defineKeyDown(base) {
 
 function handlePause() {
   if ($input('pause').checked) {
-    application.timer.Stop();
+    app.timer.Stop();
   } else {
-    application.timer.Start();
+    app.timer.Start();
   }
 }
 
@@ -160,7 +162,7 @@ function updateCode() {
   try {
     // The code actually returns the function from inside it, so call the eval
     // result immediately.
-    aiFunction = eval(code)(new Support(application));
+    aiFunction = eval(code)(new Support(app));
     $input('ai').disabled = false;
     // We got new code. Disable update for now.
     $input('update').disabled = true;
