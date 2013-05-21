@@ -58,12 +58,12 @@ class AiUpdate {
       var actions = aiFunction();
       var pressed = {};
       var keyMap = {
-        down: "Down",
-        left: "Left",
-        jump: "S",
-        right: "Right",
-        shoot: "A",
-        up: "Up",
+        DOWN: 'Down',
+        LEFT: 'Left',
+        JUMP: 'S',
+        RIGHT: 'Right',
+        SHOOT: 'A',
+        UP: 'Up',
       };
       for (var actionName in actions) {
         // Enjine checks loosely against null for false, so don't even bother to

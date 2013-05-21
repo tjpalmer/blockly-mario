@@ -3,9 +3,8 @@ module blockly_mario {
 Blockly.Language.agent_act = {
   init: function() {
     this.setColour(290);
-    this.appendDummyInput().appendTitle("activate");
-    this.appendValueInput('ACTION');
-    this.setInputsInline(true);
+    this.appendValueInput('ACTION').appendTitle("activate");
+    //this.setInputsInline(true);
     this.setPreviousStatement(true);
     this.setNextStatement(true);
     this.setTooltip(
@@ -23,12 +22,12 @@ Blockly.Language.agent_action = {
       .appendDummyInput()
       .appendTitle(
         new Blockly.FieldDropdown([
-          ["jump", 'jump'],
-          ["shoot", 'shoot'],
-          ["left", 'left'],
-          ["right", 'right'],
-          ["up", 'up'],
-          ["down", 'down'],
+          ["jump", 'JUMP'],
+          ["shoot", 'SHOOT'],
+          ["left", 'LEFT'],
+          ["right", 'RIGHT'],
+          ["up", 'UP'],
+          ["down", 'DOWN'],
         ]),
         'VALUE'
       );
@@ -45,6 +44,27 @@ Blockly.Language.agent_enemies = {
     this.appendDummyInput().appendTitle("enemies");
     this.setOutput(true, Array);
     this.setTooltip("A list of all enemies (in distance order?).");
+  }
+};
+
+Blockly.Language.agent_enemyTypeOption = {
+  init: function() {
+    this.setColour(160);
+    this
+      .appendDummyInput()
+      .appendTitle(
+        new Blockly.FieldDropdown([
+          ["bullet bill", 'BULLET_BILL'],
+          ["goomba (mushroom)", 'GOOMBA'],
+          ["green koopa (turtle)", 'GREEN_KOOPA'],
+          ["piranha plant", 'PIRANHA_PLANT'],
+          ["red koopa (turtle)", 'RED_KOOPA'],
+          ["spiny (turtle)", 'SPINY'],
+        ]),
+        'VALUE'
+      );
+    this.setOutput(true, String);
+    this.setTooltip("Choose from the list of possible enemy types.");
   }
 };
 
@@ -87,6 +107,36 @@ Blockly.Language.agent_onGround = {
   }
 };
 
+Blockly.Language.agent_spriteType = {
+  init: function() {
+    this.setColour(160);
+    this.appendValueInput("SPRITE").setCheck("Sprite").appendTitle("type of");
+    this.setOutput(true, String);
+    this.setTooltip("The type identifier of any character or block.");
+  }
+};
+
+Blockly.Language.agent_tileOption = {
+  init: function() {
+    this.setColour(160);
+    this
+      .appendDummyInput()
+      .appendTitle(
+        new Blockly.FieldDropdown([
+          ["brick", 'BRICK'],
+          // Coin, fire flower here or with mushroom?
+          ["platform", 'PLATFORM'],
+          ["question", 'QUESTION'],
+          ["tube", 'TUBE'],
+          ["solid", 'SOLID'],
+        ]),
+        'VALUE'
+      );
+    this.setOutput(true, String);
+    this.setTooltip("Choose from the list of possible tile types.");
+  }
+};
+
 Blockly.Language.agent_value = {
   init: function() {
     this.setColour(230);
@@ -125,15 +175,13 @@ Blockly.JavaScript.agent_act = function() {
   return code;
 };
 
-Blockly.JavaScript.agent_action = function() {
-  // The values here are used directly as string contents.
-  var code = '"' + this.getTitleValue('VALUE') + '"';
-  return [code, Blockly.JavaScript.ORDER_ATOMIC];
-};
+Blockly.JavaScript.agent_action = directString;
 
 Blockly.JavaScript.agent_enemies = function() {
   return ["$$support.enemies()", Blockly.JavaScript.ORDER_MEMBER];
 };
+
+Blockly.JavaScript.agent_enemyTypeOption = directString;
 
 Blockly.JavaScript.agent_mario = function() {
   return ["Mario.MarioCharacter", Blockly.JavaScript.ORDER_MEMBER];
@@ -156,6 +204,12 @@ Blockly.JavaScript.agent_onGround = function() {
   return [code, Blockly.JavaScript.ORDER_MEMBER];
 };
 
+Blockly.JavaScript.agent_spriteType = function() {
+  var sprite = valueToCode(this, 'SPRITE', Blockly.JavaScript.ORDER_NONE);
+  var code = ["$$support.spriteType(", sprite, ")"].join("");
+  return [code, Blockly.JavaScript.ORDER_MEMBER];
+};
+
 Blockly.JavaScript.agent_value = function() {
   var sprite = valueToCode(this, 'SPRITE', Blockly.JavaScript.ORDER_COMMA);
   var valueKey = this.getTitleValue('VALUE');
@@ -169,6 +223,13 @@ Blockly.JavaScript.agent_value = function() {
 Blockly.JavaScript.text_print = function() {
   var text = valueToCode(this, 'TEXT', Blockly.JavaScript.ORDER_NONE) || '""';
   return 'console.log(' + text + ');\n';
+};
+
+/// The values here are used directly as string contents.
+/// Should be used as a method on blocks.
+function directString() {
+  var code = '"' + this.getTitleValue('VALUE') + '"';
+  return [code, Blockly.JavaScript.ORDER_ATOMIC];
 };
 
 function valueToCode(block, name: string, order) =>

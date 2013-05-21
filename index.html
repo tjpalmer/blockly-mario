@@ -39,6 +39,13 @@
             <value name="ACTION"><block type="agent_action"></block></value>
           </block>
           <block type="agent_enemies"></block>
+          <block type="logic_compare">
+            <value name="A"><block type="agent_spriteType"></block></value>
+            <title name="OP">EQ</title>
+            <value name="B"><block type="agent_enemyTypeOption">
+              <title name="VALUE">GOOMBA</title>
+            </block></value>
+          </block>
           <block type="agent_mode"></block>
           <block type="agent_onGround"></block>
           <block type="agent_value">

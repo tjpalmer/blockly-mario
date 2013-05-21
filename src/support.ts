@@ -27,6 +27,26 @@ export class Support {
     return this.gameState() instanceof stateClass;
   }
 
+  spriteType(sprite): string {
+    if (sprite instanceof Mario.BulletBill) {
+      return 'BULLET_BILL';
+    } else if (sprite instanceof Mario.Character) {
+      return 'MARIO';
+    } else if (sprite instanceof Mario.FlowerEnemy) {
+      // The recorded type for these is actually Spiky.
+      return 'PIRANHA_PLANT';
+    } else if (sprite instanceof Mario.Enemy) {
+      switch (sprite.Type) {
+        case Mario.Enemy.Goomba: return 'GOOMBA';
+        case Mario.Enemy.GreenKoopa: return 'GREEN_KOOPA';
+        case Mario.Enemy.RedKoopa: return 'RED_KOOPA';
+        case Mario.Enemy.Spiky: return 'SPINY';
+      }
+    }
+    // TODO Flesh out!
+    return 'UNKNOWN';
+  }
+
   spriteValue(sprite, key: string): number {
     // Keys are like 'POSITION_X', where first is 'POSITION', and last is 'X'.
     // If no underscore, then first and last would be the same.
