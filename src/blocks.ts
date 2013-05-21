@@ -137,6 +137,23 @@ Blockly.Language.agent_tileOption = {
   }
 };
 
+Blockly.Language.agent_tileSize = {
+  init: function() {
+    this.setColour(230);
+    this
+      .appendDummyInput()
+      .appendTitle("tile")
+      .appendTitle(new Blockly.FieldDropdown([
+          ["radius", 'RADIUS'],
+          ["size", 'SIZE']
+        ]),
+        'VALUE'
+      );
+    this.setOutput(true, Number);
+    this.setTooltip('The tile "radius" or full size (edge length).');
+  }
+};
+
 Blockly.Language.agent_value = {
   init: function() {
     this.setColour(230);
@@ -145,6 +162,8 @@ Blockly.Language.agent_value = {
       .appendDummyInput()
       .appendTitle(
         new Blockly.FieldDropdown([
+          ["offset x", 'OFFSET_X'],
+          ["offset y", 'OFFSET_Y'],
           ["position x", 'POSITION_X'],
           ["position y", 'POSITION_Y'],
           ["radius x", 'RADIUS_X'],
@@ -161,7 +180,8 @@ Blockly.Language.agent_value = {
       "Positions are refer to center points, " +
       "where right is +X and up is +Y.\n" +
       "Mario's origin is the bottom middle of the screen, " +
-      "and all other characters are relative to Mario."
+      "and all other characters are relative to Mario.\n" +
+      "Offset is from tile center."
     );
   }
 };
@@ -207,6 +227,12 @@ Blockly.JavaScript.agent_onGround = function() {
 Blockly.JavaScript.agent_spriteType = function() {
   var sprite = valueToCode(this, 'SPRITE', Blockly.JavaScript.ORDER_NONE);
   var code = ["$$support.spriteType(", sprite, ")"].join("");
+  return [code, Blockly.JavaScript.ORDER_MEMBER];
+};
+
+Blockly.JavaScript.agent_tileSize = function() {
+  var key = this.getTitleValue('VALUE');
+  var code = ["$$support.tileSize('", key, "')"].join("");
   return [code, Blockly.JavaScript.ORDER_MEMBER];
 };
 

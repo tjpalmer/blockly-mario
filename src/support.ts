@@ -4,6 +4,8 @@ module blockly_mario {
 
 var screenRadius = {X: 160, Y: 120};
 
+var tileSize = 16;
+
 export class Support {
 
   constructor(public app: any) {}
@@ -54,10 +56,39 @@ export class Support {
     var first = keys[0];
     var last = keys[keys.length - 1];
     switch (first) {
+      case 'OFFSET': return this.getOffset(sprite, last);
       case 'POSITION': return this.getPosition(sprite, last);
       case 'RADIUS': return this.getRadius(sprite, last);
       case 'VELOCITY': return this.getVelocity(sprite, last);
     }
+  }
+
+  tileSize(key: string): number {
+    var value = tileSize;
+    if (key == 'RADIUS') {
+      value /= 2;
+    }
+    return value;
+  }
+
+  private getOffset(sprite, axis: string): number {
+    var state = this.gameState();
+    if (state instanceof Mario.LevelState) {
+      // Look at tile center, not lower left.
+      var value = sprite[axis];
+      if (axis == 'Y') {
+        // Count up, not down. Center on sprite.
+        value *= -1;
+        value += 2 * screenRadius.Y;
+        // Hand-tweaked so that on ground minus radius y is 0.
+        value += sprite.Height / 2 - 1;
+      }
+      value %= tileSize;
+      // Origin at center.
+      value -= tileSize / 2;
+      return value;
+    }
+    return Number.NaN;
   }
 
   private getPosition(sprite, axis: string): number {
