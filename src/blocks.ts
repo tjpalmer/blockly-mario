@@ -43,7 +43,7 @@ Blockly.Language.agent_enemies = {
     this.setColour(210);
     this.appendDummyInput().appendTitle("enemies");
     this.setOutput(true, Array);
-    this.setTooltip("A list of all enemies (in distance order?).");
+    this.setTooltip("A list of all active enemies.");
   }
 };
 
@@ -155,7 +155,7 @@ Blockly.Language.agent_tileTypeOption = {
           // TODO bill blaster?
           ["brick", 'BRICK'],
           // Coin, fire flower here or with mushroom?
-          ["out of bounds", 'OUT_OF_BOUNDS'],
+          ["off screen", 'OFF_SCREEN'],
           ["pipe", 'PIPE'],
           ["question", 'QUESTION'],
           ["solid", 'SOLID'],

@@ -75,31 +75,27 @@ export class Support {
     var state = this.gameState();
     if (state instanceof Mario.LevelState) {
       var mario = Mario.MarioCharacter;
-      //console.log("1. (" + x + ", " + y + ")");
       // Put positive down for looking into world data.
       y *= -1;
-      //console.log("2. (" + x + ", " + y + ")");
       // Offset by Mario center.
       x += mario.X;
       y += mario.Y;
-      //console.log("3. (" + x + ", " + y + ")");
       y -= mario.Height / 2;
-      //console.log("4. (" + x + ", " + y + ")");
       // Now go to tile coordinates.
       x = Math.floor(x / tileSize);
       y = Math.floor(y / tileSize);
-      //console.log("5. (" + x + ", " + y + ")");
+
       // Get block info.
       var level = state.Level;
       if (x < 0 || y < 0 || x >= level.Width || y >= level.Height) {
-        return 'OUT_OF_BOUNDS';
+        return 'OFF_SCREEN';
       }
       // Change the type number into one of our strings.
       // No constants are defined on these in mariohtml5, I don't think.
       // TODO Add them there?
       var type = level.Map[x][y];
-      console.log("(" + x + ", " + y + "): " + type);
       switch (type) {
+        // Nothing.
         case 0: return 'AIR';
 
         // Large pipe. TODO Small pipe?
@@ -118,7 +114,11 @@ export class Support {
         // Already bumped things. TODO All used?
         case 4: case 5: case 6: case 7:
         // Various block types (stone, wood, metal).
-        case 9: case 12: case 28: return 'SOLID';
+        case 9: case 12: case 28:
+        // Internal ground blocks that are listed as non-blocking, but which
+        // form parts of blocking groups.
+        case 131: case 145: case 147:
+        return 'SOLID';
       }
 
       // Nothing so far, but lots of generic ground exists in this space.
@@ -127,10 +127,17 @@ export class Support {
         var behavior = Mario.Tile.Behaviors[type];
         // Check == rather than & here. These are simples.
         switch (behavior) {
+          // I'll commit to double-checking things that I think shouldn't be
+          // air here and catch them above in the switch there.
+          case 0: return 'AIR';
           case Mario.Tile.BlockAll: return 'SOLID';
           case Mario.Tile.BlockUpper: return 'SURFACE';
         }
       }
+
+      // And in case we see this.
+      console.log("Unknown type: " + type);
+
     } else if (state instanceof Mario.MapState) {
       // TODO What?
     }
