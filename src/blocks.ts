@@ -116,27 +116,6 @@ Blockly.Language.agent_spriteType = {
   }
 };
 
-Blockly.Language.agent_tileOption = {
-  init: function() {
-    this.setColour(160);
-    this
-      .appendDummyInput()
-      .appendTitle(
-        new Blockly.FieldDropdown([
-          ["brick", 'BRICK'],
-          // Coin, fire flower here or with mushroom?
-          ["platform", 'PLATFORM'],
-          ["question", 'QUESTION'],
-          ["tube", 'TUBE'],
-          ["solid", 'SOLID'],
-        ]),
-        'VALUE'
-      );
-    this.setOutput(true, String);
-    this.setTooltip("Choose from the list of possible tile types.");
-  }
-};
-
 Blockly.Language.agent_tileSize = {
   init: function() {
     this.setColour(230);
@@ -151,6 +130,41 @@ Blockly.Language.agent_tileSize = {
       );
     this.setOutput(true, Number);
     this.setTooltip('The tile "radius" or full size (edge length).');
+  }
+};
+
+Blockly.Language.agent_tileTypeAt = {
+  init: function() {
+    this.setColour(160);
+    this.appendValueInput("X").setCheck(Number).appendTitle("tile type at x");
+    this.appendValueInput("Y").setCheck(Number).appendTitle("y");
+    this.setInputsInline(true);
+    this.setOutput(true, String);
+    this.setTooltip("Tile type at pixel offset (x, y) from Mario's center.");
+  }
+};
+
+Blockly.Language.agent_tileTypeOption = {
+  init: function() {
+    this.setColour(160);
+    this
+      .appendDummyInput()
+      .appendTitle(
+        new Blockly.FieldDropdown([
+          ["air", 'AIR'],
+          // TODO bill blaster?
+          ["brick", 'BRICK'],
+          // Coin, fire flower here or with mushroom?
+          ["out of bounds", 'OUT_OF_BOUNDS'],
+          ["pipe", 'PIPE'],
+          ["question", 'QUESTION'],
+          ["solid", 'SOLID'],
+          ["surface (top only)", 'SURFACE'],
+        ]),
+        'VALUE'
+      );
+    this.setOutput(true, String);
+    this.setTooltip("Choose from the list of possible tile types.");
   }
 };
 
@@ -235,6 +249,15 @@ Blockly.JavaScript.agent_tileSize = function() {
   var code = ["$$support.tileSize('", key, "')"].join("");
   return [code, Blockly.JavaScript.ORDER_MEMBER];
 };
+
+Blockly.JavaScript.agent_tileTypeAt = function() {
+  var x = valueToCode(this, 'X', Blockly.JavaScript.ORDER_COMMA);
+  var y = valueToCode(this, 'Y', Blockly.JavaScript.ORDER_COMMA);
+  var code = ["$$support.tileTypeAt(", x, ", ", y, ")"].join("");
+  return [code, Blockly.JavaScript.ORDER_MEMBER];
+};
+
+Blockly.JavaScript.agent_tileTypeOption = directString;
 
 Blockly.JavaScript.agent_value = function() {
   var sprite = valueToCode(this, 'SPRITE', Blockly.JavaScript.ORDER_COMMA);

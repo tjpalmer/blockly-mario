@@ -71,6 +71,72 @@ export class Support {
     return value;
   }
 
+  tileTypeAt(x: number, y: number): string {
+    var state = this.gameState();
+    if (state instanceof Mario.LevelState) {
+      var mario = Mario.MarioCharacter;
+      //console.log("1. (" + x + ", " + y + ")");
+      // Put positive down for looking into world data.
+      y *= -1;
+      //console.log("2. (" + x + ", " + y + ")");
+      // Offset by Mario center.
+      x += mario.X;
+      y += mario.Y;
+      //console.log("3. (" + x + ", " + y + ")");
+      y -= mario.Height / 2;
+      //console.log("4. (" + x + ", " + y + ")");
+      // Now go to tile coordinates.
+      x = Math.floor(x / tileSize);
+      y = Math.floor(y / tileSize);
+      //console.log("5. (" + x + ", " + y + ")");
+      // Get block info.
+      var level = state.Level;
+      if (x < 0 || y < 0 || x >= level.Width || y >= level.Height) {
+        return 'OUT_OF_BOUNDS';
+      }
+      // Change the type number into one of our strings.
+      // No constants are defined on these in mariohtml5, I don't think.
+      // TODO Add them there?
+      var type = level.Map[x][y];
+      console.log("(" + x + ", " + y + "): " + type);
+      switch (type) {
+        case 0: return 'AIR';
+
+        // Large pipe. TODO Small pipe?
+        case 10: case 11: case 26: case 27: return 'PIPE';
+
+        // Hide special natures of bricks. TODO Is 19 used?
+        case 16: case 17: case 18: case 19: return 'BRICK';
+
+        // Hide special (mushroominess) case 22. TODO Are 20 or 23 used?
+        case 20: case 21: case 22: case 23: return 'QUESTION';
+
+        // TODO Anything other than 34 used?
+        // TODO Transform coin into a sprite representation????
+        case 32: case 33: case 34: case 35: return 'COIN';
+
+        // Already bumped things. TODO All used?
+        case 4: case 5: case 6: case 7:
+        // Various block types (stone, wood, metal).
+        case 9: case 12: case 28: return 'SOLID';
+      }
+
+      // Nothing so far, but lots of generic ground exists in this space.
+      // Use the info.
+      if (type >= 128) {
+        var behavior = Mario.Tile.Behaviors[type];
+        // Check == rather than & here. These are simples.
+        switch (behavior) {
+          case Mario.Tile.BlockAll: return 'SOLID';
+          case Mario.Tile.BlockUpper: return 'SURFACE';
+        }
+      }
+    } else if (state instanceof Mario.MapState) {
+      // TODO What?
+    }
+    return 'UNKNOWN';
+  }
+
   private getOffset(sprite, axis: string): number {
     var state = this.gameState();
     if (state instanceof Mario.LevelState) {

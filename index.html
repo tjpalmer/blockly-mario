@@ -35,6 +35,7 @@
     <div id="blockly">
       <xml id="toolbox" style="display: none">
         <category name="Agent">
+          <block type="agent_mode"></block>
           <block type="agent_act">
             <value name="ACTION"><block type="agent_action"></block></value>
           </block>
@@ -46,13 +47,26 @@
               <title name="VALUE">GOOMBA</title>
             </block></value>
           </block>
-          <block type="agent_mode"></block>
-          <block type="agent_onGround"></block>
-          <block type="agent_tileSize"></block>
           <block type="agent_value">
             <value name="SPRITE"><block type="agent_mario"></block></value>
             <title name="VALUE">POSITION_X</title>
           </block>
+          <block type="logic_compare">
+            <value name="A"><block type="agent_tileTypeAt">
+              <value name="X"><block type="math_number">
+                <title name="NUM">0</title>
+              </block></value>
+              <value name="Y"><block type="math_number">
+                <title name="NUM">0</title>
+              </block></value>
+            </block></value>
+            <title name="OP">EQ</title>
+            <value name="B"><block type="agent_tileTypeOption">
+              <title name="VALUE">QUESTION</title>
+            </block></value>
+          </block>
+          <block type="agent_onGround"></block>
+          <block type="agent_tileSize"></block>
         </category>
         <!--
           Flow is usually called "Control" in Blockly, but for agent control,

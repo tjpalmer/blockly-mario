@@ -158,7 +158,7 @@ function updateCode() {
   // Wrap in a function we can call at each update.
   // TODO Do I want to capture or use time delta?
   code = ["(function($$support) {", code, "})"].join("\n");
-  //console.log(code);
+  console.log(code);
   try {
     // The code actually returns the function from inside it, so call the eval
     // result immediately.
