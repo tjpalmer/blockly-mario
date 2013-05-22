@@ -99,15 +99,6 @@ Blockly.Language.agent_mode = {
   }
 };
 
-Blockly.Language.agent_onGround = {
-  init: function() {
-    this.setColour(120);
-    this.appendDummyInput().appendTitle("on ground (OBSOLETE!!!)");
-    this.setOutput(true, Boolean);
-    this.setTooltip("On ground after last time step or not.");
-  }
-};
-
 Blockly.Language.agent_powerUps = {
   init: function() {
     this.setColour(210);
@@ -288,11 +279,6 @@ Blockly.JavaScript.agent_mode = function() {
     WIN: "Mario.WinState",
   }[this.getTitleValue('MODE')];
   var code = "$$support.gameStateIs(" + className + ")";
-  return [code, Blockly.JavaScript.ORDER_MEMBER];
-};
-
-Blockly.JavaScript.agent_onGround = function() {
-  var code = "Mario.MarioCharacter.OnGround";
   return [code, Blockly.JavaScript.ORDER_MEMBER];
 };
 
