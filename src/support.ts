@@ -2,6 +2,7 @@
 
 module blockly_mario {
 
+// Capitalized X and Y for consistency with other mariohtml5 things and such.
 var screenRadius = {X: 160, Y: 120};
 
 var tileSize = 16;
@@ -81,19 +82,32 @@ export class Support {
       x += mario.X;
       y += mario.Y;
       y -= mario.Height / 2;
+
+      // Check limits before we change x and y to tile coordinates.
+      // AI can't see more than human could see.
+      var camera = state.Camera;
+      var screenMinX = camera.X;
+      var screenMaxX = screenMinX + 2 * screenRadius.X - 1;
+      // Origin at top going down by this point in transform.
+      var screenMinY = camera.Y;
+      var screenMaxY = screenMinY + 2 * screenRadius.Y - 1;
+      if (
+        x < screenMinX || y < screenMinY ||
+        x > screenMaxX || y > screenMaxY
+      ) {
+        return 'OFF_SCREEN';
+      }
+
       // Now go to tile coordinates.
       x = Math.floor(x / tileSize);
       y = Math.floor(y / tileSize);
 
-      // Get block info.
+      // Get block type.
       var level = state.Level;
-      if (x < 0 || y < 0 || x >= level.Width || y >= level.Height) {
-        return 'OFF_SCREEN';
-      }
+      var type = level.Map[x][y];
       // Change the type number into one of our strings.
       // No constants are defined on these in mariohtml5, I don't think.
       // TODO Add them there?
-      var type = level.Map[x][y];
       switch (type) {
         // Nothing.
         case 0: return 'AIR';
@@ -135,7 +149,7 @@ export class Support {
         }
       }
 
-      // And in case we see this.
+      // And in case we see this ...
       console.log("Unknown type: " + type);
 
     } else if (state instanceof Mario.MapState) {
@@ -171,15 +185,15 @@ export class Support {
 
     if (state instanceof Mario.LevelState) {
       if (sprite === mario) {
-        // Mario relative to bottom middle.
-        // No vertical scrolling, and make pits clearer to set bottom at 0.
+        // Mario relative to screen center.
         value = mario[axis];
         if (axis == 'X') {
+          // TODO Include Y, too, even if always 0?
           value -= state.Camera.X;
         }
         // No size constants defined in mariohtml5.
         // TODO Make my own? Expose as blocks?
-        value -= {X: screenRadius.X, Y: 2 * screenRadius.Y}[axis];
+        value -= {X: screenRadius.X, Y: screenRadius.Y}[axis];
       } else {
         // All else relative to mario.
         // TODO Undefined if old data. Is that okay?

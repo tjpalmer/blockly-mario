@@ -154,7 +154,8 @@ Blockly.Language.agent_tileTypeOption = {
           ["air", 'AIR'],
           // TODO bill blaster?
           ["brick", 'BRICK'],
-          // Coin, fire flower here or with mushroom?
+          // TODO Coin, fire flower here or with mushroom?
+          ["coin", 'COIN'],
           ["off screen", 'OFF_SCREEN'],
           ["pipe", 'PIPE'],
           ["question", 'QUESTION'],
@@ -193,7 +194,7 @@ Blockly.Language.agent_value = {
       "Get the requested value for the given animated character.\n" +
       "Positions are refer to center points, " +
       "where right is +X and up is +Y.\n" +
-      "Mario's origin is the bottom middle of the screen, " +
+      "Mario's origin point is the center of the screen, " +
       "and all other characters are relative to Mario.\n" +
       "Offset is from tile center."
     );
