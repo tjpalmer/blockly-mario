@@ -16,8 +16,8 @@ export class Support {
     var enemies: any[] = this.gameState().Sprites.Objects.filter(sprite =>
       sprite instanceof Mario.Enemy ||
       sprite instanceof Mario.BulletBill ||
-      // Shells are only dangerous when in motion.
-      Boolean(sprite instanceof Mario.Shell && sprite.Facing)
+      // Shells are only dangerous when in motion, but list anyway.
+      sprite instanceof Mario.Shell
     );
     return enemies;
   }
@@ -30,21 +30,52 @@ export class Support {
     return this.gameState() instanceof stateClass;
   }
 
+  powerUps(): any[] {
+    if (!this.gameStateIs(Mario.LevelState)) return [];
+    var enemies: any[] = this.gameState().Sprites.Objects.filter(sprite =>
+      sprite instanceof Mario.Mushroom ||
+      sprite instanceof Mario.FireFlower
+    );
+    return enemies;
+  }
+
+  spritePredicate(sprite, key: string): bool {
+    var value = false;
+    switch (key) {
+      case 'ON_GROUND': value = sprite.OnGround; break;
+      case 'HAS_FIRE': value = sprite.Fire; break;
+      case 'SUPER': value = sprite.Large; break;
+      case 'WINGED': value = sprite.Winged; break;
+    }
+    // Wipe over undefineds and such.
+    value = Boolean(value);
+    return value;
+  }
+
   spriteType(sprite): string {
+    // TODO How to recognize sliding shells?
     if (sprite instanceof Mario.BulletBill) {
       return 'BULLET_BILL';
     } else if (sprite instanceof Mario.Character) {
       return 'MARIO';
-    } else if (sprite instanceof Mario.FlowerEnemy) {
-      // The recorded type for these is actually Spiky.
-      return 'PIRANHA_PLANT';
     } else if (sprite instanceof Mario.Enemy) {
+      if (sprite instanceof Mario.FlowerEnemy) {
+        // The recorded type for these is actually Spiky.
+        return 'PIRANHA_PLANT';
+      }
+      // For the rest, type is fine.
       switch (sprite.Type) {
         case Mario.Enemy.Goomba: return 'GOOMBA';
         case Mario.Enemy.GreenKoopa: return 'GREEN_KOOPA';
         case Mario.Enemy.RedKoopa: return 'RED_KOOPA';
         case Mario.Enemy.Spiky: return 'SPINY';
       }
+    } else if (sprite instanceof Mario.FireFlower) {
+      return 'FIRE_FLOWER';
+    } else if (sprite instanceof Mario.Mushroom) {
+      return 'SUPER_MUSHROOM';
+    } else if (sprite instanceof Mario.Shell) {
+      return 'SHELL';
     }
     // TODO Flesh out!
     return 'UNKNOWN';
@@ -57,6 +88,7 @@ export class Support {
     var first = keys[0];
     var last = keys[keys.length - 1];
     switch (first) {
+      case 'FACING': return this.getFacing(sprite, last);
       case 'OFFSET': return this.getOffset(sprite, last);
       case 'POSITION': return this.getPosition(sprite, last);
       case 'RADIUS': return this.getRadius(sprite, last);
@@ -156,6 +188,12 @@ export class Support {
       // TODO What?
     }
     return 'UNKNOWN';
+  }
+
+  private getFacing(sprite, axis: string): number {
+    // Axis is always X. TODO Assert?
+    // Convert undefined to NaN with plus.
+    return +sprite.Facing;
   }
 
   private getOffset(sprite, axis: string): number {

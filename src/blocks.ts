@@ -55,10 +55,11 @@ Blockly.Language.agent_enemyTypeOption = {
       .appendTitle(
         new Blockly.FieldDropdown([
           ["bullet bill", 'BULLET_BILL'],
-          ["goomba (mushroom)", 'GOOMBA'],
+          ["goomba (mushroom enemy)", 'GOOMBA'],
           ["green koopa (turtle)", 'GREEN_KOOPA'],
           ["piranha plant", 'PIRANHA_PLANT'],
           ["red koopa (turtle)", 'RED_KOOPA'],
+          ["shell (green or red)", 'SHELL'],
           ["spiny (turtle)", 'SPINY'],
         ]),
         'VALUE'
@@ -101,9 +102,62 @@ Blockly.Language.agent_mode = {
 Blockly.Language.agent_onGround = {
   init: function() {
     this.setColour(120);
-    this.appendDummyInput().appendTitle("on ground");
+    this.appendDummyInput().appendTitle("on ground (OBSOLETE!!!)");
     this.setOutput(true, Boolean);
     this.setTooltip("On ground after last time step or not.");
+  }
+};
+
+Blockly.Language.agent_powerUps = {
+  init: function() {
+    this.setColour(210);
+    this.appendDummyInput().appendTitle("power-ups");
+    this.setOutput(true, Array);
+    this.setTooltip(
+      "A list of all active power-ups (mushrooms and fire flowers)."
+    );
+  }
+};
+
+Blockly.Language.agent_predicate = {
+  init: function() {
+    this.setColour(120);
+    this.appendValueInput("SPRITE");
+    this
+      .appendDummyInput()
+      .appendTitle(
+        new Blockly.FieldDropdown([
+          ["on ground", 'ON_GROUND'],
+          ["has fire", 'HAS_FIRE'],
+          ["super (big)", 'SUPER'],
+          ["winged", 'WINGED'],
+        ]),
+        'VALUE'
+      );
+    this.setInputsInline(true);
+    this.setOutput(true, Boolean);
+    this.setTooltip(
+      "Logical (true or false) condition about the given character.\n" +
+      "Some apply only to Mario or only to enemies. " +
+      "When inapplicable, the value is always false."
+    );
+  }
+};
+
+Blockly.Language.agent_powerUpTypeOption = {
+  init: function() {
+    this.setColour(160);
+    this
+      .appendDummyInput()
+      .appendTitle(
+        new Blockly.FieldDropdown([
+          ["fire flower", 'FIRE_FLOWER'],
+          ["super mushroom (power-up)", 'SUPER_MUSHROOM'],
+        ]),
+        'VALUE'
+      );
+    this.setOutput(true, String);
+    this.setTooltip("Choose from the list of possible power-up types.");
   }
 };
 
@@ -112,7 +166,7 @@ Blockly.Language.agent_spriteType = {
     this.setColour(160);
     this.appendValueInput("SPRITE").setCheck("Sprite").appendTitle("type of");
     this.setOutput(true, String);
-    this.setTooltip("The type identifier of any character or block.");
+    this.setTooltip("Text identifying the type of any character or power-up.");
   }
 };
 
@@ -177,6 +231,7 @@ Blockly.Language.agent_value = {
       .appendDummyInput()
       .appendTitle(
         new Blockly.FieldDropdown([
+          ["facing x", 'FACING_X'],
           ["offset x", 'OFFSET_X'],
           ["offset y", 'OFFSET_Y'],
           ["position x", 'POSITION_X'],
@@ -196,7 +251,9 @@ Blockly.Language.agent_value = {
       "where right is +X and up is +Y.\n" +
       "Mario's origin point is the center of the screen, " +
       "and all other characters are relative to Mario.\n" +
-      "Offset is from tile center."
+      "Offset is from tile center.\n" +
+      "Facing is -1 (left), 1 (right), " +
+      "or even 0 (for some nonmoving characters)."
     );
   }
 };
@@ -236,6 +293,21 @@ Blockly.JavaScript.agent_mode = function() {
 
 Blockly.JavaScript.agent_onGround = function() {
   var code = "Mario.MarioCharacter.OnGround";
+  return [code, Blockly.JavaScript.ORDER_MEMBER];
+};
+
+Blockly.JavaScript.agent_powerUps = function() {
+  return ["$$support.powerUps()", Blockly.JavaScript.ORDER_MEMBER];
+};
+
+Blockly.JavaScript.agent_powerUpTypeOption = directString;
+
+Blockly.JavaScript.agent_predicate = function() {
+  var sprite = valueToCode(this, 'SPRITE', Blockly.JavaScript.ORDER_COMMA);
+  var valueKey = this.getTitleValue('VALUE');
+  var code = [
+    "$$support.spritePredicate(", sprite, ", '", valueKey, "')"
+  ].join("");
   return [code, Blockly.JavaScript.ORDER_MEMBER];
 };
 

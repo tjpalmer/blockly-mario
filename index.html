@@ -39,6 +39,14 @@
           <block type="agent_act">
             <value name="ACTION"><block type="agent_action"></block></value>
           </block>
+          <block type="agent_predicate">
+            <value name="SPRITE"><block type="agent_mario"></block></value>
+            <title name="VALUE">ON_GROUND</title>
+          </block>
+          <block type="agent_value">
+            <value name="SPRITE"><block type="agent_mario"></block></value>
+            <title name="VALUE">POSITION_X</title>
+          </block>
           <block type="agent_enemies"></block>
           <block type="logic_compare">
             <value name="A"><block type="agent_spriteType"></block></value>
@@ -47,9 +55,13 @@
               <title name="VALUE">GOOMBA</title>
             </block></value>
           </block>
-          <block type="agent_value">
-            <value name="SPRITE"><block type="agent_mario"></block></value>
-            <title name="VALUE">POSITION_X</title>
+          <block type="agent_powerUps"></block>
+          <block type="logic_compare">
+            <value name="A"><block type="agent_spriteType"></block></value>
+            <title name="OP">EQ</title>
+            <value name="B"><block type="agent_powerUpTypeOption">
+              <title name="VALUE">SUPER_MUSHROOM</title>
+            </block></value>
           </block>
           <block type="logic_compare">
             <value name="A"><block type="agent_tileTypeAt">
@@ -65,7 +77,6 @@
               <title name="VALUE">QUESTION</title>
             </block></value>
           </block>
-          <block type="agent_onGround"></block>
           <block type="agent_tileSize"></block>
         </category>
         <!--
