@@ -330,7 +330,7 @@ Blockly.JavaScript.agent_value = function() {
 /// TODO Some log visible on page? (And plotting, too?)
 Blockly.JavaScript.text_print = function() {
   var text = valueToCode(this, 'TEXT', Blockly.JavaScript.ORDER_NONE) || '""';
-  return 'console.log(' + text + ');\n';
+  return 'blockly_mario.log(' + text + ');\n';
 };
 
 /// The values here are used directly as string contents.

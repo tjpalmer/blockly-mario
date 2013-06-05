@@ -5,11 +5,43 @@
 
 module blockly_mario {
 
-var aiFunction: () => any;
-
 /// The mariohtml5 app.
 /// Exported for easier inspection in console.
 export var app: any;
+
+// In-page logging functionality.
+var lastMessage = null;
+export function log(message) {
+  var consoleDiv = $('console');
+  //var wasScrolled = consoleDiv.scrollTop == consoleDiv.scrollHeight;
+  var escaped = String(message).replace(/&/g, "&amp;").replace(/</g, "&lt;");
+  // TODO Extract lastMessage by text content???
+  if (escaped === lastMessage) {
+    // Repeat message. Increment count.
+    var entryDiv = <HTMLElement>consoleDiv.lastChild;
+    var countSpan = <HTMLElement>entryDiv.firstChild;
+    if (!(countSpan instanceof Element)) {
+      // Still need to insert the count.
+      entryDiv.innerHTML =
+        '<span class="log-count">1</span>' + entryDiv.innerHTML;
+      countSpan = <HTMLElement>entryDiv.firstChild;
+    }
+    var count = Number(countSpan.innerHTML);
+    countSpan.innerHTML = String(count + 1);
+  } else {
+    // New message.
+    lastMessage = escaped;
+    consoleDiv.innerHTML += "<div>" + escaped + "</div>";
+  }
+  // Keep things from getting out of control.
+  while (consoleDiv.childNodes.length > 1000) {
+    consoleDiv.removeChild(consoleDiv.firstChild);
+  }
+  // Too hard to get back to the bottom, but might be nice: if (wasScrolled)
+  consoleDiv.scrollTop = consoleDiv.scrollHeight;
+}
+
+var aiFunction: () => any;
 
 window.onload = function() {
   // Mario.
@@ -35,6 +67,11 @@ window.onload = function() {
   $input('pause').checked = false;
   $('pause').onclick = handlePause;
   $('update').onclick = updateCode;
+
+  // Handle console resize.
+  window.addEventListener('resize', windowResized, false);
+  // And kick off initial sizing.
+  windowResized();
 
   // Restore saved blocks if any.
   var blocksXml = localStorage.getItem(storageName('blocks'));
@@ -174,6 +211,12 @@ function updateCode() {
     // Disable AI control.
     throw e;
   }
+}
+
+function windowResized() {
+  var console = $('console');
+  // We need 12 pixels presumably for the 1px border. Could look that up somehow?
+  console.style.height = ($('app').clientHeight - console.offsetTop - 12) + "px";
 }
 
 function workspaceChanged() {

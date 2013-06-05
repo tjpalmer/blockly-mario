@@ -307,4 +307,6 @@ export class Support {
 
 }
 
+function $(id) => <HTMLElement>document.getElementById(id);
+
 }

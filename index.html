@@ -21,16 +21,15 @@
   <body>
     <!-- Use tabindex to make mario focusable. -->
     <div id="app">
-      <div id="content">
-        <div>
-          <canvas id="canvas" width="320" height="240" tabindex="0"></canvas>
-        </div>
-        <div id="controls">
-          <label><input id="pause" type="checkbox"/> Pause</label>
-          <label><input id="ai" type="checkbox"/> AI Control</label>
-          <input id="update" type="button" value="Update"/>
-        </div>
+      <div>
+        <canvas id="canvas" width="320" height="240" tabindex="0"></canvas>
       </div>
+      <div id="controls">
+        <label><input id="pause" type="checkbox"/> Pause</label>
+        <label><input id="ai" type="checkbox"/> AI Control</label>
+        <input id="update" type="button" value="Update"/>
+      </div>
+      <div id="console"></div>
     </div>
     <div id="blockly">
       <xml id="toolbox" style="display: none">
@@ -142,6 +141,10 @@
         </category>
         <category name="Variables" custom="VARIABLE"></category>
       </xml>
+    </div>
+    <div id="files">
+      <a href="#" id="open" download>Open</a>
+      <a href="#" id="save" download>Save</a>
     </div>
   </body>
 </html>
