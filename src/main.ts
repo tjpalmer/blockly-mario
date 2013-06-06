@@ -284,7 +284,7 @@ function workspaceChanged() {
   );
   window.localStorage.setItem(storageName('blocks'), xml);
   // Update the save link.
-  $a('save').href = "data:text/xml;base64," + btoa(xml);
+  $a('save').href = "data:text/plain;base64," + btoa(xml);
 }
 
 }
