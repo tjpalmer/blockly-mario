@@ -63,8 +63,10 @@ window.onload = function() {
   // Focus game when disabling AI.
   // When by mouse, this make sense. TODO Verify by mouse using cleverness?
   $('ai').onclick = () => {if (!$input('ai').checked) $('canvas').focus()};
-  // Reset pause because we otherwise just get a blank canvas.
-  $input('pause').checked = false;
+  // Reset checkboxes for Firefox.
+  ['ai', 'pause'].forEach(id => {
+    $input(id).checked = false;
+  });
   $('pause').onclick = handlePause;
   $('update').onclick = updateCode;
 
@@ -81,6 +83,9 @@ window.onload = function() {
   }
   // No op, but hey. Timeout because it wasn't disabling the button right.
   setTimeout(() => {updateCode()}, 0);
+
+  // Let play by default.
+  $('canvas').focus();
 };
 
 /// TODO Rename this to 'AiStep'?
@@ -127,6 +132,8 @@ class AiUpdate {
 
 function $(id) => <HTMLElement>document.getElementById(id);
 
+function $a(id) => <HTMLLinkElement>$(id);
+
 function $input(id) => <HTMLInputElement>$(id);
 
 function copySimpleShallow(object) {
@@ -160,12 +167,16 @@ function defineKeyDown(base) {
   return function(event: KeyboardEvent) {
     // TODO Add space code (32) to Enjine.Keys?
     if (this.IsActive() && event.keyCode == 32) {
-      // Toggle on space.
+      // Toggle pause on space.
       // Handle this at the event itself so we don't need to track from time to
       // time.
       var pause = $input('pause');
       pause.checked = !pause.checked;
       handlePause();
+    } else if (this.IsActive() && event.keyCode == 13) {
+      // Toggle AI on enter.
+      var ai = $input('ai');
+      ai.checked = !ai.checked;
     } else {
       // Standard handling.
       base.call(this, event);
@@ -227,6 +238,8 @@ function workspaceChanged() {
     Blockly.Xml.workspaceToDom(Blockly.mainWorkspace)
   );
   window.localStorage.setItem(storageName('blocks'), xml);
+  // Update the save link.
+  $a('save').href = "data:text/xml;base64," + btoa(xml);
 }
 
 }
