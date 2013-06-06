@@ -43,6 +43,8 @@ export function log(message) {
 
 var aiFunction: () => any;
 
+var loadClears = false;
+
 window.onload = function() {
   // Mario.
   app = new Enjine.Application();
@@ -69,6 +71,11 @@ window.onload = function() {
   });
   $('pause').onclick = handlePause;
   $('update').onclick = updateCode;
+  // File opening.
+  $('import').addEventListener('click', handleImport, false);
+  $('open').addEventListener('click', handleOpen, false);
+  $('file-chooser').addEventListener('change', handleFileChosen, false);
+  // TODO Testing: $('file-chooser').addEventListener('click', event => {console.log(event)}, false);
 
   // Handle console resize.
   window.addEventListener('resize', windowResized, false);
@@ -78,8 +85,7 @@ window.onload = function() {
   // Restore saved blocks if any.
   var blocksXml = localStorage.getItem(storageName('blocks'));
   if (blocksXml) {
-    var dom = Blockly.Xml.textToDom(blocksXml);
-    Blockly.Xml.domToWorkspace(Blockly.mainWorkspace, dom);
+    loadBlocksXml(blocksXml, true);
   }
   // No op, but hey. Timeout because it wasn't disabling the button right.
   setTimeout(() => {updateCode()}, 0);
@@ -184,11 +190,50 @@ function defineKeyDown(base) {
   };
 }
 
+function handleFileChosen(event) {
+  var files = event.target.files;
+  if (!files.length) {
+    // Nothing chosen. TODO Is that expected by the user in some cases?
+    return;
+  }
+  var reader = new FileReader;
+  reader.onload = (event) => {
+    loadBlocksXml(event.target.result, loadClears);
+  };
+  reader.readAsText(files[0]);
+}
+
+function handleFileLoaded() {
+}
+
+function handleImport() {
+  loadClears = false;
+  $('file-chooser').click();
+}
+
+function handleOpen() {
+  loadClears = true;
+  $('file-chooser').click();
+}
+
 function handlePause() {
   if ($input('pause').checked) {
     app.timer.Stop();
   } else {
     app.timer.Start();
+  }
+}
+
+function loadBlocksXml(blocksXml, clear) {
+  try {
+    var dom = Blockly.Xml.textToDom(blocksXml);
+    if (clear) {
+      Blockly.mainWorkspace.clear();
+    }
+    Blockly.Xml.domToWorkspace(Blockly.mainWorkspace, dom);
+  } catch (e) {
+    alert("Failed to open Blockly program.");
+    throw e;
   }
 }
 

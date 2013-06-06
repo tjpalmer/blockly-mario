@@ -1,3 +1,4 @@
+/* Purposely override visited color. */
 a {
   color: blue;
 }
@@ -42,6 +43,10 @@ a {
 
 #controls > *:last-child {
   margin: 0;
+}
+
+#file-chooser {
+  display: none;
 }
 
 #files {
