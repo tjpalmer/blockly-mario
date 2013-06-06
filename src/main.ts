@@ -75,7 +75,8 @@ window.onload = function() {
   $('import').addEventListener('click', handleImport, false);
   $('open').addEventListener('click', handleOpen, false);
   $('file-chooser').addEventListener('change', handleFileChosen, false);
-  // TODO Testing: $('file-chooser').addEventListener('click', event => {console.log(event)}, false);
+  // TODO Testing: $('file-chooser').
+  // TODO   addEventListener('click', event => {console.log(event)}, false);
 
   // Handle console resize.
   window.addEventListener('resize', windowResized, false);
@@ -271,8 +272,10 @@ function updateCode() {
 
 function windowResized() {
   var console = $('console');
-  // We need 12 pixels presumably for the 1px border. Could look that up somehow?
-  console.style.height = ($('app').clientHeight - console.offsetTop - 12) + "px";
+  // We need 12 pixels presumably for the 1px border.
+  // TODO Could look that up somehow?
+  console.style.height =
+    ($('app').clientHeight - console.offsetTop - 12) + "px";
 }
 
 function workspaceChanged() {
@@ -283,8 +286,22 @@ function workspaceChanged() {
     Blockly.Xml.workspaceToDom(Blockly.mainWorkspace)
   );
   window.localStorage.setItem(storageName('blocks'), xml);
+
   // Update the save link.
+  // Chrome complained about security for xml, and default handlers for xml can
+  // be bad anyway.
+  // TODO Using percents and plainer text (not base64) might be nice.
   $a('save').href = "data:text/plain;base64," + btoa(xml);
+
+  // Support export of current block, too.
+  // TODO blockToDom_ is not public. Keep an eye on it!
+  // TODO Further, it looks like it might be worth tweaking (x, y).
+  // TODO See Blockly.Xml.workspaceToDom.
+  var blockDom = Blockly.Xml.blockToDom_(Blockly.selected);
+  // TODO Is the xml surrounding element really needed?
+  var blockXml = "<xml>" + Blockly.Xml.domToText(blockDom) + "</xml>";
+  // TODO Customize download name by block type/name.
+  $a('export').href = "data:text/plain;base64," + btoa(blockXml);
 }
 
 }
