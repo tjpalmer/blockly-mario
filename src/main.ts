@@ -77,6 +77,12 @@ window.onload = function() {
   $('file-chooser').addEventListener('change', handleFileChosen, false);
   // TODO Testing: $('file-chooser').
   // TODO   addEventListener('click', event => {console.log(event)}, false);
+  // Saving.
+  Blockly.bindEvent_(
+    Blockly.mainWorkspace.getCanvas(), 'blocklySelectChange', null,
+    selectionChanged
+  );
+  $('export').addEventListener('click', handleExport, false);
 
   // Handle console resize.
   window.addEventListener('resize', windowResized, false);
@@ -204,7 +210,11 @@ function handleFileChosen(event) {
   reader.readAsText(files[0]);
 }
 
-function handleFileLoaded() {
+function handleExport(event) {
+  if (!Blockly.selected) {
+    alert("You must first select a block to export.");
+    event.preventDefault();
+  }
 }
 
 function handleImport() {
@@ -241,6 +251,22 @@ function loadBlocksXml(blocksXml, clear) {
 /// Allows easy wrap overriding.
 function redefine(object, name: string, define): void {
   object[name] = define(object[name]);
+}
+
+function selectionChanged() {
+  // Update export of current block. Default to nothing.
+  var link = "#";
+  if (Blockly.selected) {
+    // TODO blockToDom_ is not public. Keep an eye on it!
+    // TODO Further, it looks like it might be worth tweaking (x, y).
+    // TODO See Blockly.Xml.workspaceToDom.
+    var blockDom = Blockly.Xml.blockToDom_(Blockly.selected);
+    // TODO Is the xml surrounding element really needed?
+    var blockXml = "<xml>" + Blockly.Xml.domToText(blockDom) + "</xml>";
+    // TODO Customize download name by block type/name.
+    link = "data:text/plain," + encodeURIComponent(blockXml);
+  }
+  $a('export').href = link;
 }
 
 /// From BlocklyStorage strategy to keep named for this url.
@@ -291,17 +317,7 @@ function workspaceChanged() {
   // Chrome complained about security for xml, and default handlers for xml can
   // be bad anyway.
   // TODO Using percents and plainer text (not base64) might be nice.
-  $a('save').href = "data:text/plain;base64," + btoa(xml);
-
-  // Support export of current block, too.
-  // TODO blockToDom_ is not public. Keep an eye on it!
-  // TODO Further, it looks like it might be worth tweaking (x, y).
-  // TODO See Blockly.Xml.workspaceToDom.
-  var blockDom = Blockly.Xml.blockToDom_(Blockly.selected);
-  // TODO Is the xml surrounding element really needed?
-  var blockXml = "<xml>" + Blockly.Xml.domToText(blockDom) + "</xml>";
-  // TODO Customize download name by block type/name.
-  $a('export').href = "data:text/plain;base64," + btoa(blockXml);
+  $a('save').href = "data:text/plain," + encodeURIComponent(xml);
 }
 
 }
