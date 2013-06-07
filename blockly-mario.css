@@ -23,8 +23,6 @@ a {
   /* Bring in the bottom and right a little. Blockly is overshooting. */
   bottom: 2px;
   left: 340px;
-  /* I'm not sure I like this fixed, but it's the easiest I've had getting
-  /* things working right now. */
   position: fixed;
   top: 0;
   right: 2px;

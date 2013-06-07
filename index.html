@@ -2,7 +2,7 @@
 <!--
   Unfortunately, Blockly expects quirks mode.
   But that's obnoxious.
-  Folks say child selectors work in IE only in standards mode.
+  IE might be more compatible in standards mode?
   Main Blockly problem I've seen is an extra pixel between block categories and
   block lists in the toolbox.
   Can I fix this?
@@ -19,9 +19,9 @@
     <script src="blockly-mario.min.js"></script>
   </head>
   <body>
-    <!-- Use tabindex to make mario focusable. -->
     <div id="app">
       <div>
+        <!-- Use tabindex to make display focusable. -->
         <canvas id="canvas" width="320" height="240" tabindex="0"></canvas>
       </div>
       <div id="controls">

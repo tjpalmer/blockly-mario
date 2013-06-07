@@ -5,6 +5,10 @@
 
 module blockly_mario {
 
+// Vars.
+
+var aiFunction: () => any;
+var loadClears = false;
 /// The mariohtml5 app.
 /// Exported for easier inspection in console.
 export var app: any;
@@ -41,11 +45,7 @@ export function log(message) {
   consoleDiv.scrollTop = consoleDiv.scrollHeight;
 }
 
-var aiFunction: () => any;
-
-var loadClears = false;
-
-window.onload = function() {
+window.addEventListener('load', () => {
   // Mario.
   app = new Enjine.Application();
   app.Initialize(new Mario.LoadingState("../mariohtml5/"), 320, 240);
@@ -90,16 +90,16 @@ window.onload = function() {
   windowResized();
 
   // Restore saved blocks if any.
-  var blocksXml = localStorage.getItem(storageName('blocks'));
+  var blocksXml = localStorage.getItem(storageKey('blocks'));
   if (blocksXml) {
     loadBlocksXml(blocksXml, true);
   }
   // No op, but hey. Timeout because it wasn't disabling the button right.
   setTimeout(() => {updateCode()}, 0);
 
-  // Let play by default.
+  // Finally, focus the display, so we start with manual control.
   $('canvas').focus();
-};
+});
 
 /// TODO Rename this to 'AiStep'?
 class AiUpdate {
@@ -159,19 +159,13 @@ class AiUpdate {
   }
 }
 
+// Functions.
+
 function $(id) => <HTMLElement>document.getElementById(id);
 
 function $a(id) => <HTMLLinkElement>$(id);
 
 function $input(id) => <HTMLInputElement>$(id);
-
-function copySimpleShallow(object) {
-  var copy = {};
-  for (var key in object) {
-    copy[key] = object[key];
-  }
-  return copy;
-}
 
 /// Wraps the main generated statements in a returned function.
 /// Generated variables and functions should be outside this.
@@ -202,10 +196,12 @@ function defineKeyDown(base) {
       var pause = $input('pause');
       pause.checked = !pause.checked;
       handlePause();
+      event.preventDefault();
     } else if (this.IsActive() && event.keyCode == 13) {
       // Toggle AI on enter.
       var ai = $input('ai');
       ai.checked = !ai.checked;
+      event.preventDefault();
     } else {
       // Standard handling.
       base.call(this, event);
@@ -286,8 +282,8 @@ function selectionChanged() {
 }
 
 /// From BlocklyStorage strategy to keep named for this url.
-function storageName(name: string) =>
-  window.location.href.split("#")[0] + "#" + name;
+function storageKey(id: string) =>
+  window.location.href.split("#")[0] + "#" + id;
 
 function updateCode() {
   var code = Blockly.Generator.workspaceToCode('JavaScript');
@@ -327,7 +323,7 @@ function workspaceChanged() {
   var xml = Blockly.Xml.domToText(
     Blockly.Xml.workspaceToDom(Blockly.mainWorkspace)
   );
-  window.localStorage.setItem(storageName('blocks'), xml);
+  window.localStorage.setItem(storageKey('blocks'), xml);
 
   // Update the save link.
   // Chrome complained about security for xml, and default handlers for xml can
