@@ -13,12 +13,21 @@ export class Support {
 
   enemies(): any[] {
     if (!this.gameStateIs(Mario.LevelState)) return [];
-    var enemies: any[] = this.gameState().Sprites.Objects.filter(sprite =>
-      sprite instanceof Mario.Enemy ||
-      sprite instanceof Mario.BulletBill ||
-      // Shells are only dangerous when in motion, but list anyway.
-      sprite instanceof Mario.Shell
-    );
+    var enemies: any[] = this.gameState().Sprites.Objects.filter(sprite => {
+      if (sprite instanceof Mario.BulletBill || sprite instanceof Mario.Shell) {
+        return true;
+      }
+      if (sprite instanceof Mario.FlowerEnemy) {
+        // See if it's behind a pipe.
+        // Humans can't see, and AI shouldn't either.
+        var x = this.getPosition(sprite, 'X');
+        var y = this.getPosition(sprite, 'Y');
+        // If the top is in pipe, it's invisible.
+        return this.tileTypeAt(x, y + sprite.Height / 2) != 'PIPE';
+      } else {
+        return sprite instanceof Mario.Enemy;
+      }
+    });
     return enemies;
   }
 
@@ -288,12 +297,8 @@ export class Support {
   private getVelocity(sprite, axis: string): number {
     var value: number;
     if (this.gameStateIs(Mario.LevelState)) {
-      // Yes, this is velocity, despite the 'a'.
-      // There's a convergence issue for y velocity when on the ground.
-      // It trends toward 0 but doesn't get there very fast.
-      // TODO Track X and Y at each time step for all sprites and do a diff?
-      // TODO Any changes directly to mario code?
-      value = sprite[axis + 'a'];
+      // Use our own manually calculated velocities.
+      value = sprite[axis + 'v'];
     } else {
       value = Number.NaN;
     }

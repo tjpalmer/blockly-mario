@@ -34,7 +34,7 @@ export function log(message) {
     consoleDiv.innerHTML += "<div>" + escaped + "</div>";
   }
   // Keep things from getting out of control.
-  while (consoleDiv.childNodes.length > 1000) {
+  while (consoleDiv.childNodes.length > 100) {
     consoleDiv.removeChild(consoleDiv.firstChild);
   }
   // Too hard to get back to the bottom, but might be nice: if (wasScrolled)
@@ -105,11 +105,27 @@ window.onload = function() {
 class AiUpdate {
   constructor(private base: any) {}
   Update(delta: number): void {
-    // TODO Mario AI calls!
+    // Track sprite positions for accurate velocity.
+    var sprites = app.stateContext.State.Sprites;
+    if (sprites) {
+      sprites.Objects.forEach(sprite => {
+        // These var names aren't used in mariohtml5, so they're safe here.
+        // They do track pseudo-velocity as Xa and Ya.
+        sprite.Xv = sprite.X - sprite.OldX;
+        sprite.Yv = sprite.Y - sprite.OldY;
+        sprite.OldX = sprite.X;
+        sprite.OldY = sprite.Y;
+      });
+    }
+
+    // Mario AI calls!
     var aiActive = $input('ai').checked && Boolean(aiFunction);
     var oldPressed: any;
     if (aiActive) {
       // Run our AI, then extract the key presses from the actions.
+      // TODO Run AI function no matter what, for output.
+      // TODO What about dodging infinite loops and such?
+      // TODO Disable (until some toggle?) if run time was ever super long?
       var actions = aiFunction();
       var pressed = {};
       var keyMap = {
